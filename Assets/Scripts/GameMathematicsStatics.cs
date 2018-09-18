@@ -19,6 +19,34 @@ public class GameMathematicsStatics
 		return length;
 	}
 
+	//https://www.geometrictools.com/Documentation/DistanceLine3Line3.pdf
+	public static float CalculateLineAndLineDistance()
+	{
+		return -1.0f;
+	}
+
+	public static Vector3 CalculateLineAndPlanePoint(Line line, Plane plane)
+	{
+		float d = -Dot(plane.planeNormal, plane.planeCenter);//-n*p
+		float ns = Dot(plane.planeNormal, line.start);//n*s
+		float nv = Dot(plane.planeNormal, line.direction);
+		if (nv == 0)
+		{
+			if (ns + d == 0) {
+				//baohan
+				return Vector3.zero;
+			} else {
+				//pingxing
+				return Vector3.zero;
+			}
+		}
+
+		float t = -(ns + d) / nv;
+		Vector3 point = line.start + line.direction * t;
+		return point;
+	}
+		
+
 	public static Vector3 Cross(Vector3 lhs, Vector3 rhs)
 	{
 		return new Vector3 (lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);
