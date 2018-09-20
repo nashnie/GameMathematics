@@ -33,11 +33,11 @@ public class GameMathematicsStatics
 		if (nv == 0)
 		{
 			if (ns + d == 0) {
-				//baohan
+				//直线被平面包含
 				return Vector3.zero;
 			} else {
-				//pingxing
-				return Vector3.zero;
+                //直线和平面包含
+                return Vector3.zero;
 			}
 		}
 

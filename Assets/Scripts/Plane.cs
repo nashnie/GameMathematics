@@ -5,25 +5,37 @@ using UnityEngine;
 public class Plane : MonoBehaviour {
 
 	public Vector3 planeNormal;
-	public float distanceFromOrigin;
+    public Vector3 planeTangent;
+
+    public float distanceFromOrigin;
 	public Vector3 planeCenter;
 
 	public Transform directionTarget;
 
 	public GameObject plane;
 
-	public GameObject plane2;
+    private Vector3 planeAndLinePoint;
 
-	void Awake () {
+    public Vector3 PlaneAndLinePoint
+    {
+        set
+        {
+            planeAndLinePoint = value;
+            Vector3 direction = (planeAndLinePoint - planeCenter).normalized;
+            plane.transform.position = planeCenter;
+            Vector3 planeRot = Quaternion.identity * direction;
+            Debug.Log("planeRot" + planeRot.ToString());
+
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.position = planeAndLinePoint;
+            cube.transform.localScale = Vector3.one * 0.1f + Vector3.up;
+
+            plane.transform.localRotation = Quaternion.LookRotation(planeRot);
+        }
+    }
+
+    void Awake () {
 		planeCenter = transform.position;
 		planeNormal = (directionTarget.position - planeCenter).normalized;
-		plane.transform.position = planeCenter;
-		Vector3 planeRot = Quaternion.identity * (planeNormal);
-		Vector3 planeRot2 = Quaternion.identity * (-planeNormal);
-		Debug.Log ("planeRot" + planeRot.ToString());
-		Debug.Log ("planeRot2" + planeRot2.ToString());
-
-		plane.transform.localRotation = Quaternion.LookRotation(planeRot);
-		plane2.transform.localRotation =  Quaternion.LookRotation(planeRot2);
-	}
+    }
 }
