@@ -9,10 +9,12 @@ public class Line : MonoBehaviour
 	public float length;
 	public Transform directionTarget;
 
-	private Vector3 end;
+    public Vector3 end;
 
-	// Use this for initialization
-	void Awake () {
+    public Color DrawGizmosColor = Color.yellow;
+
+    // Use this for initialization
+    void Awake () {
 		start = transform.position;
 		direction = (directionTarget.position - start).normalized;
 		end = start + direction.normalized * length;
@@ -22,6 +24,6 @@ public class Line : MonoBehaviour
 	{
 		Gizmos.color = Color.yellow;
 		Gizmos.DrawSphere(start, 1f);
-		Debug.DrawLine (start, end, Color.yellow);
+		Debug.DrawLine (start, end, DrawGizmosColor);
 	}
 }
