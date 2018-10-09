@@ -20,5 +20,12 @@ public class Main : MonoBehaviour {
         Vector3 lineAndPlanePoint = GameMathematicsStatics.CalculateLineAndPlanePoint(line, plane);
         plane.PlaneAndLinePoint = lineAndPlanePoint;
         Debug.Log("CalculatePointAndLineDistance lineAndPlanePoint " + lineAndPlanePoint.ToString());
+
+        //1233.333
+        int compressedFloat = CompressFloatUtil.CompressFloat(1234.56789f);
+        Debug.Log("CompressFloatUtil compressedFloat " + compressedFloat);
+
+        float decompressedFloat = CompressFloatUtil.DecompressFloat(compressedFloat);
+        Debug.Log("CompressFloatUtil decompressedFloat " + decompressedFloat);
     }
 }
