@@ -13,6 +13,9 @@ public class Point : MonoBehaviour {
     // Use this for initialization
 	void Awake () {
 		location = transform.position;
+        x = location.x;
+        y = location.y;
+        z = location.z;
 	}
 
 	void OnDrawGizmos()

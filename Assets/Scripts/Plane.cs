@@ -14,7 +14,7 @@ public class Plane : MonoBehaviour {
 
 	public GameObject plane;
 
-    private Vector3 planeAndLinePoint;
+    protected Vector3 planeAndLinePoint;
 
     public Vector3 PlaneAndLinePoint
     {
@@ -34,7 +34,8 @@ public class Plane : MonoBehaviour {
         }
     }
 
-    void Awake () {
+    protected virtual void Awake ()
+    {
 		planeCenter = transform.position;
 		planeNormal = (directionTarget.position - planeCenter).normalized;
     }

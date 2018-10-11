@@ -28,7 +28,7 @@ public class GameMathematicsStatics
         return dist3D_Line_to_Line(line1, line2);
 	}
 
-	public static Vector3 CalculateLineAndPlanePoint(Line line, Plane plane)
+	public static Vector3 CalculateLineAndPlaneIntersection(Line line, Plane plane)
 	{
 		float d = -Dot(plane.planeNormal, plane.planeCenter);//-n*p
 		float ns = Dot(plane.planeNormal, line.start);//n*s
@@ -48,9 +48,47 @@ public class GameMathematicsStatics
 		Vector3 point = line.start + line.direction * t;
 		return point;
 	}
-		
 
-	public static Vector3 Cross(Vector3 lhs, Vector3 rhs)
+    public static Vector3 CalculateLineAndTriangleIntersection(Line line, Triangle plane, ref bool isInTriangle)
+    {
+        isInTriangle = false;
+
+        float d = -Dot(plane.planeNormal, plane.planeCenter);//-n*p
+        float ns = Dot(plane.planeNormal, line.start);//n*s
+        float nv = Dot(plane.planeNormal, line.direction);
+        if (nv == 0)
+        {
+            if (ns + d == 0)
+            {
+                //直线被平面包含
+                return Vector3.zero;
+            }
+            else
+            {
+                //直线和平面包含
+                return Vector3.zero;
+            }
+        }
+
+        float t = -(ns + d) / nv;
+        Vector3 point = line.start + line.direction * t;
+
+        Vector3 r = point - plane.p0.location;
+        Vector3 q1 = plane.p1.location - plane.p0.location;
+        Vector3 q2 = plane.p2.location - plane.p0.location;
+        float k = 1 / (Dot(q1, q1) * Dot(q2, q2) - Dot(q1, q2) * Dot(q1, q2));
+        float w1 = k * (Dot(q2, q2) * Dot(r, q1) - Dot(q1, q2) * Dot(r, q2));
+        float w2 = k * (-Dot(q1, q2) * Dot(r, q1) + Dot(q1, q1) * Dot(r, q2));
+        float w0 = 1 - w1 - w2;
+
+        isInTriangle = w1 >= 0 && w2 >= 0 && w0 >= 0;
+
+        Debug.Log("w1 " + w1 + " w2 " + w2 + " w0 " + w0);
+
+        return point;
+    }
+
+    public static Vector3 Cross(Vector3 lhs, Vector3 rhs)
 	{
 		return new Vector3 (lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);
 	}

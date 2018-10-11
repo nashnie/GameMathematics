@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CompressFloatUtil
+﻿public class CompressFloatUtil
 {
     //min和max越准确，越能准确表示压缩的小数
     private static float min = 1000f;
