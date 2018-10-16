@@ -94,6 +94,41 @@ public class GameMathematicsStatics
         return point;
     }
 
+    public static Vector3 CalculateLineAndSphereIntersection(Line line, Sphere plane, ref bool isInSphere)
+    {
+        //二次多项式根的判别式 d * d = b * b - 4 * a * c，判断根的数量
+        //p = s + vt
+        float a = Dot(line.direction, line.direction);
+        float b = 2 * Dot(line.start, line.direction);
+        float c = Dot(line.start, line.start) - plane.radius * plane.radius;
+        float d = b * b - 4 * a * c;
+
+        Debug.Log("d " + d);
+
+
+        if (d < 0)
+        {
+            isInSphere = false;
+            return Vector3.zero;
+        }
+        else if (d > 0)
+        {
+            isInSphere = true;
+            //两个交点 距离光线较近的一点
+            float t1 = (- b - Mathf.Sqrt(d)) / (2 * a);
+            float t2 = (-b + Mathf.Sqrt(d)) / (2 * a);
+            Vector3 intersection = line.start + t1 * line.direction;
+            return intersection;
+        }
+        else
+        {
+            isInSphere = true;
+            float t = -b / (2 * a);
+            Vector3 intersection = line.start + t * line.direction;
+            return intersection;
+        }
+    }
+
     public static Vector3 Cross(Vector3 lhs, Vector3 rhs)
 	{
 		return new Vector3 (lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);

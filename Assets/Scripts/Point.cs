@@ -11,7 +11,8 @@ public class Point : MonoBehaviour {
     public Vector3 location = Vector3.zero;
 
     // Use this for initialization
-	void Awake () {
+	void Awake ()
+    {
 		location = transform.position;
         x = location.x;
         y = location.y;

@@ -7,8 +7,11 @@ public class Main : MonoBehaviour {
 	public Point pt;
 	public Line line;
     public Line line2;
+    public Line sphereCheckLine;
+
     public Plane plane;
     public Triangle triangle;
+    public Sphere sphere;
 
     // Use this for initialization
     void Start () {
@@ -33,5 +36,10 @@ public class Main : MonoBehaviour {
 
         float decompressedFloat = CompressFloatUtil.DecompressFloat(compressedFloat);
         Debug.Log("CompressFloatUtil decompressedFloat " + decompressedFloat);
+
+        bool isInSphere = false;
+        Vector3 lineAndSphereIntersection = GameMathematicsStatics.CalculateLineAndSphereIntersection(sphereCheckLine, sphere, ref isInSphere);
+        sphere.LineAndSphereIntersection = lineAndSphereIntersection;
+        Debug.Log("CalculateLineAndSphereIntersection lineAndSphereIntersection " + lineAndSphereIntersection.ToString() + " isInSphere " + isInSphere);
     }
 }
