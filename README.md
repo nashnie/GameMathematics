@@ -1,5 +1,5 @@
 # GameMathematics
-GameMathematics
+Game Mathematics
 
 # Mathematics
 点到直线的最短距离计算算法；<br>
