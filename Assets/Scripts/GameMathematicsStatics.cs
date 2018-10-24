@@ -10,6 +10,27 @@ public class GameMathematicsStatics
 {
     private static float SMALL_NUM = 0.00000001f;
 
+    //Newton's Method Sqrt
+    public static double Sqrt(double a)
+    {
+        if (a < 0)
+        {
+            throw new System.Exception("Can not sqrt a negative number.");
+        }
+        double error = 0.00001;
+        double x = 1;
+        while (true)
+        {
+            double val = x * x;
+            if (System.Math.Abs(val - a) <= error)
+            {
+                return x;
+            }
+            x = x / 2 + a / (2 * x);
+        }
+    }
+
+
     public static float CalculatePointAndLineDistance(Point pt, Line line)
 	{
 		Vector3 qs = pt.location - line.start;

@@ -41,5 +41,7 @@ public class Main : MonoBehaviour {
         Vector3 lineAndSphereIntersection = GameMathematicsStatics.CalculateLineAndSphereIntersection(sphereCheckLine, sphere, ref isInSphere);
         sphere.LineAndSphereIntersection = lineAndSphereIntersection;
         Debug.Log("CalculateLineAndSphereIntersection lineAndSphereIntersection " + lineAndSphereIntersection.ToString() + " isInSphere " + isInSphere);
+
+        Debug.Log("Newton's Method Sqrt " + GameMathematicsStatics.Sqrt(1.23456) + " Normal Sqrt " + System.Math.Sqrt(1.23456));
     }
 }
