@@ -231,4 +231,9 @@ public class GameMathematicsStatics
         Vector3 d = P1 - P2;
         return VectorLength(d);            // distance at CPA
     }
+
+    //https://blog.csdn.net/xoyojank/article/details/54030418
+    public static void SliceMesh()
+    {
+    }
 }
