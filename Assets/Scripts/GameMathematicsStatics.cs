@@ -233,7 +233,69 @@ public class GameMathematicsStatics
     }
 
     //https://blog.csdn.net/xoyojank/article/details/54030418
-    public static void SliceMesh()
+    //https://blog.uwa4d.com/archives/UWALab_NVIDIAGameWorks.html
+    //先实现任意平面切割，再实现根据不同类型算法生成的不同碎片
+    public static void SliceMesh(Plane plane, Transform meshTransform)
+    {      
+        Vector3 planeCenter = plane.planeCenter;
+        Vector3 planeNormal = plane.planeNormal;
+        Vector3 localPlaneCenter = meshTransform.InverseTransformPoint(planeCenter);
+        Vector3 localPlaneNormal = meshTransform.InverseTransformVector(planeNormal);
+        localPlaneNormal = localPlaneNormal.normalized;
+        plane.w = Dot(localPlaneCenter, localPlaneNormal);
+        Debug.DrawLine(localPlaneCenter, localPlaneCenter + localPlaneNormal * 10.0f, Color.green);
+        BoxCollider boxCollider = meshTransform.GetComponent<BoxCollider>();
+        int boxPlaneCompare = BoxPlaneCompare(boxCollider, localPlaneNormal, plane.w);
+        if (boxPlaneCompare == -1)
+        {
+            Debug.Log("boxPlaneCompare left");
+        }
+        else if (boxPlaneCompare == 1)
+        {
+            Debug.Log("boxPlaneCompare right");
+        }
+        else
+        {
+            Debug.Log("boxPlaneCompare intersect");
+        }
+    }
+
+    private static int BoxPlaneCompare(BoxCollider box, Vector3 planeNormal, float w)
     {
+        Vector3 boxCenter = box.center + box.transform.position;
+        Vector3 boxExtents = box.size;
+        boxExtents.x *= box.transform.localScale.x;
+        boxExtents.y *= box.transform.localScale.y;
+        boxExtents.z *= box.transform.localScale.z;
+        boxExtents /= 2;
+
+        float boxCenterDist = PlaneDot(planeNormal, w, boxCenter);
+        float boxSize = BoxPushOut(planeNormal, boxExtents);
+        if (boxCenterDist > boxSize)
+        {
+            return 1;
+        }
+        else if (boxCenterDist < -boxSize)
+        {
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private static float PlaneDot(Vector3 planeNormal, float w, Vector3 point)
+    {
+        return planeNormal.x * point.x + planeNormal.y * point.y + planeNormal.z * point.z - w;
+    }
+
+    private static float BoxPushOut(Vector3 planeNormal, Vector3 boxExtents)
+    {
+        float x = Mathf.Abs(boxExtents.x * planeNormal.x);
+        float y = Mathf.Abs(boxExtents.y * planeNormal.y);
+        float z = Mathf.Abs(boxExtents.z * planeNormal.z);
+
+        return x + y + z;
     }
 }

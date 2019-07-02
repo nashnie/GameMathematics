@@ -7,6 +7,11 @@ public class Plane : MonoBehaviour {
 	public Vector3 planeNormal;
     public Vector3 planeTangent;
 
+    public float x;
+    public float y;
+    public float z;
+    public float w;
+
     public float distanceFromOrigin;
 	public Vector3 planeCenter;
 
@@ -38,5 +43,8 @@ public class Plane : MonoBehaviour {
     {
 		planeCenter = transform.position;
 		planeNormal = (directionTarget.position - planeCenter).normalized;
+        x = planeNormal.x;
+        y = planeNormal.y;
+        z = planeNormal.z;
     }
 }

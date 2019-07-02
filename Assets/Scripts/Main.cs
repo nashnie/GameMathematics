@@ -10,8 +10,12 @@ public class Main : MonoBehaviour {
     public Line sphereCheckLine;
 
     public Plane plane;
+
     public Triangle triangle;
     public Sphere sphere;
+
+    public Plane slicePlane;
+    public GameObject neededSliceMesh;
 
     // Use this for initialization
     void Start () {
@@ -43,5 +47,7 @@ public class Main : MonoBehaviour {
         Debug.Log("CalculateLineAndSphereIntersection lineAndSphereIntersection " + lineAndSphereIntersection.ToString() + " isInSphere " + isInSphere);
 
         Debug.Log("Newton's Method Sqrt " + GameMathematicsStatics.Sqrt(1.23456) + " Normal Sqrt " + System.Math.Sqrt(1.23456));
+
+        GameMathematicsStatics.SliceMesh(slicePlane, neededSliceMesh.transform);
     }
 }
