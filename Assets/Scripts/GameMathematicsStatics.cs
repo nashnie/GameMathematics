@@ -257,6 +257,13 @@ public class GameMathematicsStatics
         else
         {
             Debug.Log("boxPlaneCompare intersect");
+            List<int> baseToSlicedVertIndex;
+            List<int> baseToOtherSlicedVertIndex;
+            MeshFilter meshFilter = meshTransform.GetComponent<MeshFilter>();
+            if (meshFilter)
+            {
+                int baseVertsNum = meshFilter.mesh.vertexCount;
+            }
         }
     }
 
