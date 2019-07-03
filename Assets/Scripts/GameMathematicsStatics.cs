@@ -257,13 +257,151 @@ public class GameMathematicsStatics
         else
         {
             Debug.Log("boxPlaneCompare intersect");
-            List<int> baseToSlicedVertIndex;
-            List<int> baseToOtherSlicedVertIndex;
+            Dictionary<int, int> baseToSlicedVertIndex = new Dictionary<int, int>();
+            Dictionary<int, int> baseToOtherSlicedVertIndex = new Dictionary<int, int>();
+            List<Vector3> slicedVerts = new List<Vector3>();
+            List<int> slicedIndexs = new List<int>();
+            List<Vector3> otherSlicedVerts = new List<Vector3>();
+            List<int> otherSlicedIndexs = new List<int>();
             MeshFilter meshFilter = meshTransform.GetComponent<MeshFilter>();
             if (meshFilter)
             {
                 int baseVertsNum = meshFilter.mesh.vertexCount;
+                int baseIndexsNum = meshFilter.mesh.triangles.Length;
+                float[] vertDist = new float[baseVertsNum];
+                for (int baseVertIndex = 0; baseVertIndex < baseVertsNum; baseVertIndex++)
+                {
+                    Vector3 vert = meshFilter.mesh.vertices[baseVertIndex];
+                    float boxCenterDist = PlaneDot(planeNormal, plane.w, vert);
+                    vertDist[baseVertIndex] = boxCenterDist;
+                    int slicedVertIndex;
+                    if (vertDist[baseVertIndex] > 0.0f)
+                    {
+                        slicedVertIndex = slicedVerts.Count;
+                        slicedVerts.Add(vert);
+                        baseToSlicedVertIndex.Add(baseVertIndex, slicedVertIndex);
+                    }
+                    else
+                    {
+                        slicedVertIndex = slicedVerts.Count;
+                        otherSlicedVerts.Add(vert);
+                        baseToOtherSlicedVertIndex.Add(baseVertIndex, slicedVertIndex);
+                    }
+                }
+
+                for (int baseIndex = 0; baseIndex < baseIndexsNum; baseIndex += 3)//Triangles
+                {
+                    int[] baseVert = new int[3];
+                    int[] slicedVert = new int[3];
+                    int[] otherSlicedVert = new int[3];
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        baseVert[i] = baseIndex + i;
+                        if (baseToSlicedVertIndex.ContainsKey(baseIndex + i))
+                        {
+                            slicedVert[i] = baseToSlicedVertIndex[baseIndex + i];
+                        }
+                        else
+                        {
+                            slicedVert[i] = -1;
+                        }
+                        if (baseToOtherSlicedVertIndex.ContainsKey(baseIndex + i))
+                        {
+                            otherSlicedVert[i] = baseToOtherSlicedVertIndex[baseIndex + i];
+                        }
+                        else
+                        {
+                            otherSlicedVert[i] = -1;
+                        }
+                    }
+
+                    if (slicedVert[0] != -1 && slicedVert[1] != -1 && slicedVert[2] != -1)
+                    {
+                        slicedIndexs.Add(slicedVert[0]);
+                        slicedIndexs.Add(slicedVert[1]);
+                        slicedIndexs.Add(slicedVert[2]);
+                    }
+                    else if (otherSlicedVert[0] != -1 && otherSlicedVert[1] != -1 && otherSlicedVert[2] != -1)
+                    {
+                        otherSlicedIndexs.Add(otherSlicedVert[0]);
+                        otherSlicedIndexs.Add(otherSlicedVert[1]);
+                        otherSlicedIndexs.Add(otherSlicedVert[2]);
+                    }
+                    else
+                    {
+                        int[] finalVerts = new int[4];
+                        int finalVertsNum = 0;
+
+                        int[] otherFinalVerts = new int[4];
+                        int otherFinalVertsNum = 0;
+
+                        float[] planeDist = new float[3];
+                        planeDist[0] = vertDist[0];
+                        planeDist[1] = vertDist[1];
+                        planeDist[2] = vertDist[2];
+
+                        for (int edgeIndex = 0; edgeIndex < 3; edgeIndex++)
+                        {
+                            int thisVert = edgeIndex;
+                            if (slicedVert[thisVert] != -1)
+                            {
+                                finalVerts[finalVertsNum++] = slicedVert[thisVert];
+                            }
+                            else
+                            {
+                                otherFinalVerts[otherFinalVertsNum++] = otherSlicedVert[thisVert];
+                            }
+
+                            int nextVert = (edgeIndex + 1) % 3;
+                            bool bSlicedThisVert = slicedVert[edgeIndex] == -1;
+                            bool bSlicedNextVert = slicedVert[nextVert] == -1;
+                            if (bSlicedThisVert != bSlicedNextVert)
+                            {
+                                float alpha = -planeDist[thisVert] / (planeDist[nextVert] - planeDist[thisVert]);
+                                Vector3 interpVert = Vector3.Lerp(meshFilter.mesh.vertices[thisVert], meshFilter.mesh.vertices[nextVert], alpha);
+
+                                finalVerts[finalVertsNum++] = slicedVerts.Count;
+                                otherFinalVerts[otherFinalVertsNum++] = otherSlicedVerts.Count;
+
+                                slicedVerts.Add(interpVert);
+                                otherSlicedVerts.Add(interpVert);
+                            }
+                        }
+
+                        for (int vertIndex = 2; vertIndex < finalVertsNum; vertIndex++)
+                        {
+                            slicedIndexs.Add(finalVerts[0]);
+                            slicedIndexs.Add(finalVerts[vertIndex - 1]);
+                            slicedIndexs.Add(finalVerts[vertIndex]);
+                        }
+
+                        for (int vertIndex = 2; vertIndex < otherFinalVertsNum; vertIndex++)
+                        {
+                            otherSlicedIndexs.Add(otherFinalVerts[0]);
+                            otherSlicedIndexs.Add(otherFinalVerts[vertIndex - 1]);
+                            otherSlicedIndexs.Add(otherFinalVerts[vertIndex]);
+                        }
+                    }
+                }
             }
+
+            Mesh newSlicedMesh = new Mesh();
+            Mesh newOtherSlicedMesh = new Mesh();
+            newSlicedMesh.vertices = slicedVerts.ToArray();
+            newSlicedMesh.triangles = slicedIndexs.ToArray();
+            newOtherSlicedMesh.vertices = otherSlicedVerts.ToArray();
+            newOtherSlicedMesh.triangles = otherSlicedIndexs.ToArray();
+
+
+            GameObject slicedMeshObject = new GameObject("SlicedMesh");
+            GameObject otherSlicedMeshObject = new GameObject("OtherSlicedMesh");
+
+            MeshFilter slicedMeshFilter = slicedMeshObject.AddComponent<MeshFilter>();
+            MeshFilter otherSlicedmeshFilter = otherSlicedMeshObject.AddComponent<MeshFilter>();
+
+            slicedMeshFilter.mesh = newSlicedMesh;
+            otherSlicedmeshFilter.mesh = newOtherSlicedMesh;
         }
     }
 
